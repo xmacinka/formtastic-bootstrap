@@ -33,9 +33,8 @@ describe 'time select input' do
         output_buffer.should have_tag('select#post_publish_at_4i')
         output_buffer.should have_tag('select#post_publish_at_5i')
       end
-
     end
-    
+
     describe "with :ignore_date => false" do
       before do
         @new_post.stub(:publish_at).and_return(Time.parse('2010-11-07'))
@@ -69,15 +68,9 @@ describe 'time select input' do
       end
 
       it 'should have a hidden input for day, month and year' do
-        output_buffer.should have_tag('input#post_publish_at_1i')
-        output_buffer.should have_tag('input#post_publish_at_2i')
-        output_buffer.should have_tag('input#post_publish_at_3i')
-      end
-
-      it 'should not have values in hidden inputs for day, month and year' do
-        output_buffer.should have_tag('input#post_publish_at_1i[@value=""]')
-        output_buffer.should have_tag('input#post_publish_at_2i[@value=""]')
-        output_buffer.should have_tag('input#post_publish_at_3i[@value=""]')
+        output_buffer.should have_tag('input#post_publish_at_1i[type="hidden"]')
+        output_buffer.should have_tag('input#post_publish_at_2i[type="hidden"]')
+        output_buffer.should have_tag('input#post_publish_at_3i[type="hidden"]')
       end
 
       it 'should have an select for hour and minute' do
@@ -101,11 +94,11 @@ describe 'time select input' do
       it_should_apply_error_logic_for_input_type(:time_select)
 
       it 'should have a legend and label with the label text inside the fieldset' do
-        output_buffer.should have_tag('form div.control-group.time_select label.control-label', /Publish at/)
+        output_buffer.should have_tag('form div.form-group.time_select label.control-label', /Publish at/)
       end
 
       it 'should have two selects for hour and minute' do
-        output_buffer.should have_tag('form div.control-group.time_select div.controls select', :count => 2)
+        output_buffer.should have_tag('form div.form-group.time_select span.form-wrapper select', :count => 2)
       end
     end
 
@@ -117,14 +110,14 @@ describe 'time select input' do
       end
 
       it 'should have three selects for hour, minute and seconds' do
-        output_buffer.should have_tag('form div.control-group.time_select div.controls select', :count => 3)
+        output_buffer.should have_tag('form div.form-group.time_select span.form-wrapper select', :count => 3)
       end
     end
   end
 
   describe ':labels option' do
     it "should provide a message that :labels is not supported" do
-      pending ':labels is not supported'
+      skip ':labels is not supported'
     end
   end
 
@@ -141,10 +134,18 @@ describe 'time select input' do
       output_buffer.should have_tag('#form2_post_publish_at_5i')
     end
   end
-  
+
+  describe ':fragment_classes option' do
+    it "should define css classes added to hour/minute/second fragments"
+  end
+
+  describe ':fragment_placeholders option' do
+    it "should define css placeholders added to hour/minute/second fragments"
+  end
+
   describe "when required" do
     it "should add the required attribute to the input's html options" do
-      with_config :use_required_attribute, true do 
+      with_config :use_required_attribute, true do
         concat(semantic_form_for(@new_post) do |builder|
           concat(builder.input(:title, :as => :time_select, :required => true))
         end)
@@ -152,7 +153,7 @@ describe 'time select input' do
       end
     end
   end
-  
+
   describe "when index is provided" do
 
     before do
@@ -163,8 +164,8 @@ describe 'time select input' do
       end)
     end
 
-    it 'should index the id of the control-group' do
-      output_buffer.should have_tag("div.control-group#post_author_attributes_3_created_at_input")
+    it 'should index the id of the form-group' do
+      output_buffer.should have_tag("div.form-group#post_author_attributes_3_created_at_input")
     end
 
     it 'should index the id of the select tag' do
@@ -184,7 +185,7 @@ describe 'time select input' do
     end
 
   end
-  
+
 end
 
 

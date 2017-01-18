@@ -6,75 +6,59 @@ module FormtasticBootstrap
         include Formtastic::Inputs::Base::Wrapping
 
         def bootstrap_wrapping(&block)
-          control_group_wrapping do
-            control_label_html <<
-            controls_wrapping do
-              if options[:prepend] || options[:append]
-                if options[:prepend] && options[:append]
-                  prepended_and_appended_input_wrapping do
-                    [template.content_tag(:span, options[:prepend], :class => 'add-on'), yield, template.content_tag(:span, options[:append], :class => 'add-on'), hint_html].join("\n").html_safe
-                  end
-                elsif options[:prepend]
-                  prepended_input_wrapping do
-                    [template.content_tag(:span, options[:prepend], :class => 'add-on'), yield, hint_html].join("\n").html_safe
-                  end
-                elsif options[:append]
-                  appended_input_wrapping do
-                    [yield, template.content_tag(:span, options[:append], :class => 'add-on'), hint_html].join("\n").html_safe
-                  end
-                end
-              else
-                [yield, hint_html].join("\n").html_safe
-              end
+          form_group_wrapping do
+            label_html <<
+            template.content_tag(:span, :class => 'form-wrapper') do
+              input_content(&block) <<
+              hint_html(:block) <<
+              error_html(:block)
             end
           end
         end
 
-        def control_group_wrapping(&block)
-          template.content_tag(:div, 
-            template.capture(&block).html_safe, 
+        def input_content(&block)
+          content = [
+            add_on_content(options[:prepend]),
+            options[:prepend_content],
+            yield,
+            add_on_content(options[:append]),
+            options[:append_content]
+          ].compact.join("\n").html_safe
+
+          if prepended_or_appended?(options)
+            template.content_tag(:div, content, :class => add_on_wrapper_classes(options).join(" "))
+          else
+            content
+          end
+        end
+
+        def prepended_or_appended?(options)
+          options[:prepend] || options[:prepend_content] || options[:append] || options[:append_content]
+        end
+
+        def add_on_content(content)
+          return nil unless content
+          template.content_tag(:span, content, :class => 'input-group-addon')
+        end
+
+        def form_group_wrapping(&block)
+          template.content_tag(:div,
+            template.capture(&block).html_safe,
             wrapper_html_options
           )
         end
 
-        def controls_wrapping(&block)
-          template.content_tag(:div,
-            [template.capture(&block), error_html].join("\n").html_safe,
-            controls_wrapper_html_options
-          )
-        end
-        
-        def controls_wrapper_html_options
-          {
-            :class => "controls"
-          }
-        end
-
         def wrapper_html_options
           super.tap do |options|
-            options[:class] << " control-group"
-          end
-        end
-        
-        # Bootstrap prepend feature
-        def prepended_input_wrapping(&block)
-          template.content_tag(:div, :class => 'input-prepend') do
-            yield
+            options[:class] << " form-group"
+            options[:class] << " has-error" if errors?
           end
         end
 
-        # Bootstrap append feature
-        def appended_input_wrapping(&block)
-          template.content_tag(:div, :class => 'input-append') do
-            yield
-          end
-        end
-
-        # Bootstrap prepend and append feature
-        def prepended_and_appended_input_wrapping(&block)
-          template.content_tag(:div, :class => 'input-prepend input-append') do
-            yield
-          end
+        def add_on_wrapper_classes(options)
+          [:prepend, :append, :prepend_content, :append_content].find do |key|
+            options.has_key?(key)
+          end ? ['input-group'] : []
         end
 
       end

@@ -2,26 +2,43 @@
 module FormtasticBootstrap
   module Inputs
     class BooleanInput < Formtastic::Inputs::BooleanInput
-      include Base      
-      
+      include Base
+
+      # Skip rendering of .form-label in #bootstrap_wrapping
+      def render_label?
+        false
+      end
+
       def to_html
-        control_group_wrapping do
-          options[:label_outside] ? control_label_html : "".html_safe <<
+        bootstrap_wrapping do
           hidden_field_html <<
-          controls_wrapping do
-            label_with_nested_checkbox
-          end
+          label_with_nested_checkbox
         end
+      end
+
+      def hidden_field_html
+        template.hidden_field_tag(input_html_options[:name], unchecked_value, :id => nil, :disabled => input_html_options[:disabled] )
       end
 
       def label_with_nested_checkbox
         builder.label(
           method,
-          options[:label_outside] ? check_box_html : label_text_with_embedded_checkbox,
-          label_html_options.tap do |options|
-            options[:class] << "checkbox"
-          end
+          label_text_with_embedded_checkbox,
+          label_html_options
         )
+      end
+
+      def checkbox_wrapping(&block)
+        template.content_tag(:div,
+          template.capture(&block).html_safe,
+          wrapper_html_options
+        )
+      end
+
+      def wrapper_html_options
+        super.tap do |options|
+          options[:class] = (options[:class].split + ["checkbox"]).join(" ")
+        end
       end
 
     end

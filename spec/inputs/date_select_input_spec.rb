@@ -25,24 +25,24 @@ describe 'date select input' do
     it_should_have_input_wrapper_with_id("post_publish_at_input")
     it_should_apply_error_logic_for_input_type(:date_select)
 
-    it 'should have a label with the label text inside the control-group' do
-      output_buffer.should have_tag('form div.control-group > label.control-label', /Publish at/)
-      output_buffer.should have_tag('form div.control-group label.control-label[@for="post_publish_at"]')
+    it 'should have a label with the label text inside the form-group' do
+      output_buffer.should have_tag('form div.form-group label.control-label', /Publish at/)
+      output_buffer.should have_tag('form div.form-group label.control-label[@for="post_publish_at"]')
     end
 
     it 'should not associate the legend label with the first select' do
-      output_buffer.should_not have_tag('form div.control-group label.control-label[@for="post_publish_at_1i"]')
+      output_buffer.should_not have_tag('form div.form-group label.control-label[@for="post_publish_at_1i"]')
     end
 
     it 'should not have three labels for year, month and day' do
-      output_buffer.should_not have_tag('form div.control-group div.controls label', :count => 3)
-      output_buffer.should_not have_tag('form div.control-group div.controls label', /year/i)
-      output_buffer.should_not have_tag('form div.control-group div.controls label', /month/i)
-      output_buffer.should_not have_tag('form div.control-group div.controls label', /day/i)
+      output_buffer.should_not have_tag('form div.form-group span.form-wrapper label', :count => 3)
+      output_buffer.should_not have_tag('form div.form-group span.form-wrapper label', /year/i)
+      output_buffer.should_not have_tag('form div.form-group span.form-wrapper label', /month/i)
+      output_buffer.should_not have_tag('form div.form-group span.form-wrapper label', /day/i)
     end
 
     it 'should have three selects for year, month and day' do
-      output_buffer.should have_tag('form div.control-group div.controls select', :count => 3)
+      output_buffer.should have_tag('form div.form-group span.form-wrapper select', :count => 3)
     end
   end
 
@@ -61,7 +61,7 @@ describe 'date select input' do
     it_should_have_select_with_id("context2_post_publish_at_3i")
 
   end
-  
+
   describe "when index is provided" do
 
     before do
@@ -74,34 +74,34 @@ describe 'date select input' do
         end)
       end)
     end
-    
-    it 'should index the id of the control-group' do
-      output_buffer.should have_tag("div.control-group#post_author_attributes_3_created_at_input")
+
+    it 'should index the id of the form-group' do
+      output_buffer.should have_tag("div.form-group#post_author_attributes_3_created_at_input")
     end
-    
+
     it 'should index the id of the select tag' do
       output_buffer.should have_tag("select#post_author_attributes_3_created_at_1i")
       output_buffer.should have_tag("select#post_author_attributes_3_created_at_2i")
       output_buffer.should have_tag("select#post_author_attributes_3_created_at_3i")
     end
-    
+
     it 'should index the name of the select tag' do
       output_buffer.should have_tag("select[@name='post[author_attributes][3][created_at(1i)]']")
       output_buffer.should have_tag("select[@name='post[author_attributes][3][created_at(2i)]']")
       output_buffer.should have_tag("select[@name='post[author_attributes][3][created_at(3i)]']")
     end
-    
+
   end
 
   describe ':labels option' do
     it "should provide a message that :labels is not supported" do
-      pending ':labels is not supported'
+      skip ':labels is not supported'
     end
   end
-  
+
   describe "when required" do
     it "should add the required attribute to the input's html options" do
-      with_config :use_required_attribute, true do 
+      with_config :use_required_attribute, true do
         concat(semantic_form_for(@new_post) do |builder|
           concat(builder.input(:title, :as => :date_select, :required => true))
         end)
@@ -109,7 +109,7 @@ describe 'date select input' do
       end
     end
   end
-  
+
   describe "when order does not include day" do
     before do
       output_buffer.replace ''

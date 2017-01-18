@@ -7,20 +7,22 @@ module FormtasticBootstrap
 
         def label_html_options
           super.tap do |options|
-            # Bootstrap defines class 'label'
+            # Bootstrap defines class 'label' too, so remove the
+            # one that gets created by Formtastic.
             options[:class] = options[:class].reject { |c| c == 'label' }
-            # options[:class] << "control-label"
-          end
-        end
-        
-        def control_label_html_options
-          label_html_options.tap do |options|
-            options[:class] << "control-label"
+            options[:class] << " control-label"
           end
         end
 
-        def control_label_html
-          render_label? ? builder.label(input_name, label_text, control_label_html_options) : "".html_safe
+        # def control_label_html
+        def label_html
+          if render_label?
+            template.content_tag(:span, :class => 'form-label') do
+              builder.label(input_name, label_text, label_html_options)
+            end
+          else
+            "".html_safe
+          end
         end
 
       end

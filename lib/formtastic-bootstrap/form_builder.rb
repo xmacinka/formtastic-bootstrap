@@ -1,5 +1,5 @@
 module FormtasticBootstrap
-  
+
   class FormBuilder < Formtastic::FormBuilder
 
     configure :default_inline_error_class, 'help-inline'
@@ -7,29 +7,34 @@ module FormtasticBootstrap
     configure :default_inline_hint_class,  'help-inline'
     configure :default_block_hint_class,   'help-block'
 
+    self.input_namespaces = [::Object, ::FormtasticBootstrap::Inputs, ::Formtastic::Inputs]
+    self.action_namespaces = [::Object, ::FormtasticBootstrap::Actions, ::Formtastic::Actions]
+
+    # TODO: remove both class finders after formtastic 4 (where it will be default)
+    self.input_class_finder = ::Formtastic::InputClassFinder
+    self.action_class_finder = ::Formtastic::ActionClassFinder
+
     def self.default_error_class
       self.default_inline_error_class
     end
-    
+
     def self.default_error_class=(error_class)
       self.default_inline_error_class = error_class
       self.default_block_error_class = error_class
     end
-    
+
     def self.default_hint_class
       self.default_inline_hint_class
     end
-    
+
     def self.default_hint_class=(hint_class)
       self.default_inline_hint_class = hint_class
       self.default_block_hint_class = hint_class
     end
 
-    include FormtasticBootstrap::Helpers::InputHelper # Revisit
     include FormtasticBootstrap::Helpers::InputsHelper
-    include FormtasticBootstrap::Helpers::ActionHelper
+    include FormtasticBootstrap::Helpers::ErrorsHelper
     include FormtasticBootstrap::Helpers::ActionsHelper
-    # include Formtastic::Helpers::ErrorsHelper
 
   end
 

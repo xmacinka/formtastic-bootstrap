@@ -8,7 +8,7 @@ module FormtasticBootstrap
         def bootstrap_wrapping(&block)
           form_group_wrapping do
             label_html <<
-            template.content_tag(:span, :class => 'form-wrapper') do
+            template.content_tag(:div, :class => 'controls') do
               input_content(&block) <<
               hint_html(:block) <<
               error_html(:block)
@@ -38,7 +38,7 @@ module FormtasticBootstrap
 
         def add_on_content(content)
           return nil unless content
-          template.content_tag(:span, content, :class => 'input-group-addon')
+          template.content_tag(:span, content, :class => 'add-on')
         end
 
         def form_group_wrapping(&block)
@@ -50,15 +50,20 @@ module FormtasticBootstrap
 
         def wrapper_html_options
           super.tap do |options|
-            options[:class] << " form-group"
+            options[:class] << " control-group"
             options[:class] << " has-error" if errors?
           end
         end
 
         def add_on_wrapper_classes(options)
-          [:prepend, :append, :prepend_content, :append_content].find do |key|
+          ret = []
+          ret += [:prepend, :prepend_content].find do |key|
             options.has_key?(key)
-          end ? ['input-group'] : []
+          end ? ['input-prepend'] : []
+          ret += [:append, :append_content].find do |key|
+            options.has_key?(key)
+          end ? ['input-append'] : []
+          ret
         end
 
       end

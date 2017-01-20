@@ -28,7 +28,7 @@ module FormtasticBootstrap
       end
 
       def checkbox_wrapping(&block)
-        class_name = "checkbox"
+        class_name = ""
         class_name += " checkbox-inline" if options[:inline]
         template.content_tag(:div,
           template.capture(&block).html_safe,
